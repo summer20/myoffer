@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -35,6 +35,13 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         message = exc.errors()[0]["msg"]
         return HTMLResponse(content=f"<div class='error'>表单校验失败：{message}</div>", status_code=422)
     return JSONResponse(status_code=422, content={"detail": exc.errors()})
+
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    if request.headers.get("HX-Request"):
+        return HTMLResponse(content=f"<div class='error'>{exc.detail}</div>", status_code=exc.status_code)
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
 
 
 @app.get("/health")

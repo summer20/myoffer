@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 
 from fastapi import APIRouter, Depends, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse
@@ -90,7 +90,7 @@ def update_application_stage(
     if not application:
         raise HTTPException(status_code=404, detail="Application not found")
     application.stage = stage.strip()
-    application.updated_at = datetime.utcnow()
+    application.updated_at = datetime.now(timezone.utc)
     db.commit()
     return templates.TemplateResponse(
         "applications/_row.html",
