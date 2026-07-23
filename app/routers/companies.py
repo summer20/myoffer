@@ -63,6 +63,26 @@ def list_companies(
     )
 
 
+def _clean_scale_tags(scale_tags: list[str]) -> list[str]:
+    return [tag.strip() for tag in scale_tags if tag and tag.strip()]
+
+
+@router.get("/companies/{company_id}/edit", response_class=HTMLResponse)
+def edit_company_form(request: Request, company_id: int, db: Session = Depends(get_db)):
+    company = db.get(Company, company_id)
+    if not company:
+        raise HTTPException(status_code=404, detail="Company not found")
+    return templates.TemplateResponse(
+        "companies/_edit_form.html",
+        {
+            "request": request,
+            "company": company,
+            "industry_options": _industry_options(db),
+            "scale_tag_options": DEFAULT_SCALE_TAGS,
+        },
+    )
+
+
 @router.post("/companies", response_class=HTMLResponse)
 def create_company(
     request: Request,
@@ -74,10 +94,17 @@ def create_company(
     notes: str = Form(""),
     db: Session = Depends(get_db),
 ):
+    stripped_name = name.strip()
+    existing = db.query(Company).filter(Company.name == stripped_name).first()
+    if existing:
+        message = f"该公司已存在：{stripped_name}"
+        if request.headers.get("HX-Request"):
+            return HTMLResponse(content=f"<div class='error'>{message}</div>", status_code=409)
+        return HTMLResponse(content=message, status_code=409)
     company = Company(
-        name=name.strip(),
+        name=stripped_name,
         industry=industry.strip(),
-        scale_tags=scale_tags,
+        scale_tags=_clean_scale_tags(scale_tags),
         recruiting_open=recruiting_open,
         recruiting_url=recruiting_url.strip() or None,
         notes=notes.strip() or None,
@@ -104,7 +131,7 @@ def update_company(
         raise HTTPException(status_code=404, detail="Company not found")
     company.name = name.strip()
     company.industry = industry.strip()
-    company.scale_tags = scale_tags
+    company.scale_tags = _clean_scale_tags(scale_tags)
     company.recruiting_open = recruiting_open
     company.recruiting_url = recruiting_url.strip() or None
     company.notes = notes.strip() or None

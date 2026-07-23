@@ -46,6 +46,39 @@ def test_create_company_missing_name_returns_htmx_error_fragment(client):
     assert "error" in response.text
 
 
+def test_edit_company_form_shows_current_values(client):
+    client.post(
+        "/companies",
+        data={"name": "阿里巴巴", "industry": "互联网", "scale_tags": ["独角兽"]},
+    )
+    response = client.get("/companies/1/edit")
+    assert response.status_code == 200
+    assert "阿里巴巴" in response.text
+    assert 'value="阿里巴巴"' in response.text
+
+
+def test_create_company_duplicate_name_returns_error_not_500(client, db_engine):
+    from sqlalchemy.orm import sessionmaker
+
+    client.post("/companies", data={"name": "华为", "industry": "互联网"})
+    response = client.post(
+        "/companies",
+        data={"name": "华为", "industry": "互联网"},
+        headers={"HX-Request": "true"},
+    )
+    assert response.status_code == 409
+    assert response.status_code < 500
+    assert "已存在" in response.text
+
+    Session = sessionmaker(bind=db_engine)
+    db = Session()
+    try:
+        matches = db.query(Company).filter(Company.name == "华为").all()
+        assert len(matches) == 1, "Duplicate POST must not create a second row"
+    finally:
+        db.close()
+
+
 def test_delete_company_with_applications_requires_confirm_then_cascades(client, db_engine):
     """Test that deleting a company with applications requires confirm=true,
     shows a confirmation prompt, and cascade-deletes both the company and its applications."""

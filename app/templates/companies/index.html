@@ -37,8 +37,10 @@
     {% for tag in scale_tag_options %}
     <label><input type="checkbox" name="scale_tags" value="{{ tag }}"> {{ tag }}</label>
     {% endfor %}
+    <input type="text" name="scale_tags" placeholder="自定义标签（可选）">
     <label><input type="checkbox" name="recruiting_open" value="true"> 已开启27秋招</label>
     <input type="url" name="recruiting_url" placeholder="秋招链接">
+    <textarea name="notes" placeholder="备注"></textarea>
     <button type="submit">新增</button>
 </form>
 {% endblock %}
