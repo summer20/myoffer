@@ -1,0 +1,17 @@
+<tr id="application-{{ application.id }}">
+    <td>{{ application.company.name }}</td>
+    <td>{{ application.position }}</td>
+    <td>{{ application.base_city }}</td>
+    <td>
+        <form hx-patch="/applications/{{ application.id }}/stage" hx-target="#application-{{ application.id }}" hx-swap="outerHTML" hx-trigger="change">
+            <select name="stage">
+                {% for opt in stage_options %}
+                <option value="{{ opt }}" {% if opt == application.stage %}selected{% endif %}>{{ opt }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </td>
+    <td>{{ application.updated_at.strftime("%Y-%m-%d %H:%M") }}</td>
+    <td>{{ application.notes or "" }}</td>
+    <td><button hx-delete="/applications/{{ application.id }}" hx-target="#application-{{ application.id }}" hx-swap="outerHTML" hx-confirm="确认删除该投递记录？">删除</button></td>
+</tr>

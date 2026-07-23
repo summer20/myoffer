@@ -1,0 +1,15 @@
+<form hx-post="/companies/{{ company.id }}/applications" hx-target="#company-rows" hx-swap="innerHTML">
+    <input type="text" name="position" placeholder="岗位" required list="position-list-{{ company.id }}">
+    <datalist id="position-list-{{ company.id }}">
+        {% for opt in position_options %}<option value="{{ opt }}">{% endfor %}
+    </datalist>
+    <input type="text" name="base_city" placeholder="base城市" required list="city-list-{{ company.id }}">
+    <datalist id="city-list-{{ company.id }}">
+        {% for opt in city_options %}<option value="{{ opt }}">{% endfor %}
+    </datalist>
+    <select name="stage">
+        {% for opt in stage_options %}<option value="{{ opt }}">{{ opt }}</option>{% endfor %}
+    </select>
+    <input type="date" name="applied_date">
+    <button type="submit">提交投递</button>
+</form>
