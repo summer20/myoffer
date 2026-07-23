@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 
 from app.database import Base, engine
 from app import models  # noqa: F401
-from app.routers import companies, applications
+from app.routers import companies, applications, resume
 
 
 @asynccontextmanager
@@ -20,6 +20,7 @@ app = FastAPI(title="MyOffer", lifespan=lifespan)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(companies.router)
 app.include_router(applications.router)
+app.include_router(resume.router)
 
 
 @app.exception_handler(RequestValidationError)

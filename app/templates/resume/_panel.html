@@ -1,0 +1,13 @@
+<h2>{{ selected_category }}</h2>
+<div class="module-cards">
+    {% for module in modules %}
+    {% include "resume/_module_card.html" %}
+    {% endfor %}
+</div>
+
+<form hx-post="/resume/modules" hx-target="#resume-panel" hx-swap="innerHTML">
+    <input type="hidden" name="category" value="{{ selected_category }}">
+    <input type="text" name="title" placeholder="模块标题（可选）">
+    <textarea name="content" placeholder="粘贴简历内容" required></textarea>
+    <button type="submit">新增模块</button>
+</form>

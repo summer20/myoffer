@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>简历模块库</h1>
+<div class="resume-layout">
+    <nav class="resume-categories">
+        {% for cat in categories %}
+        <button hx-get="/resume/categories/{{ cat }}" hx-target="#resume-panel" hx-swap="innerHTML">{{ cat }}</button>
+        {% endfor %}
+    </nav>
+    <div id="resume-panel">
+        {% include "resume/_panel.html" %}
+    </div>
+</div>
+{% endblock %}
