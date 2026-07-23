@@ -403,16 +403,20 @@ class Company(Base):
 
 `app/main.py` (full file, adds the model import):
 ```python
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from app.database import Base, engine
 from app import models  # noqa: F401  (registers models with Base.metadata)
 
-app = FastAPI(title="MyOffer")
 
-
-@app.on_event("startup")
-def on_startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
+    yield
+
+
+app = FastAPI(title="MyOffer", lifespan=lifespan)
 
 
 @app.get("/health")
@@ -949,6 +953,8 @@ th, td { border: 1px solid #ccc; padding: 0.4rem 0.6rem; text-align: left; }
 - [ ] **Step 7: Wire everything into `main.py`** (full file)
 
 ```python
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import RequestValidationError
@@ -958,7 +964,14 @@ from app.database import Base, engine
 from app import models  # noqa: F401
 from app.routers import companies
 
-app = FastAPI(title="MyOffer")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
+
+
+app = FastAPI(title="MyOffer", lifespan=lifespan)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(companies.router)
 
@@ -969,11 +982,6 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         message = exc.errors()[0]["msg"]
         return HTMLResponse(content=f"<div class='error'>表单校验失败：{message}</div>", status_code=422)
     return JSONResponse(status_code=422, content={"detail": exc.errors()})
-
-
-@app.on_event("startup")
-def on_startup():
-    Base.metadata.create_all(bind=engine)
 
 
 @app.get("/health")
@@ -1637,6 +1645,8 @@ Expected: PASS (both tests)
 - [ ] **Step 5: Wire seeding into `main.py` startup** (full file)
 
 ```python
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import RequestValidationError
@@ -1647,7 +1657,19 @@ from app import models  # noqa: F401
 from app.routers import companies, applications, resume
 from app.seed_data import seed_if_empty
 
-app = FastAPI(title="MyOffer")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    db = SessionLocal()
+    try:
+        seed_if_empty(db)
+    finally:
+        db.close()
+    yield
+
+
+app = FastAPI(title="MyOffer", lifespan=lifespan)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(companies.router)
 app.include_router(applications.router)
@@ -1660,16 +1682,6 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         message = exc.errors()[0]["msg"]
         return HTMLResponse(content=f"<div class='error'>表单校验失败：{message}</div>", status_code=422)
     return JSONResponse(status_code=422, content={"detail": exc.errors()})
-
-
-@app.on_event("startup")
-def on_startup():
-    Base.metadata.create_all(bind=engine)
-    db = SessionLocal()
-    try:
-        seed_if_empty(db)
-    finally:
-        db.close()
 
 
 @app.get("/health")

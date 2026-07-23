@@ -32,8 +32,8 @@ def client(db_engine):
 
     app.dependency_overrides[get_db] = override_get_db
     # Deliberately NOT using `with TestClient(app) as c:` — entering the
-    # context manager fires the app's real @app.on_event("startup"), which
-    # calls Base.metadata.create_all()/seed against the PRODUCTION engine
+    # context manager fires the app's lifespan startup logic, which
+    # calls Base.metadata.create_all() against the PRODUCTION engine
     # (app.database.engine), not this test's in-memory one. Plain
     # construction skips startup/shutdown entirely, which is fine because
     # this fixture already creates tables on the test engine directly.
