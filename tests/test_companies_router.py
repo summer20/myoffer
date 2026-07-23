@@ -29,6 +29,41 @@ def test_update_company(client):
     assert "腾讯科技" in response.text
 
 
+def test_update_company_rejects_duplicate_name(client, db_engine):
+    """Test that updating a company's name to match an existing company returns 409."""
+    from sqlalchemy.orm import sessionmaker
+
+    # Create two companies: 阿里巴巴 and 华为
+    client.post("/companies", data={"name": "阿里巴巴", "industry": "互联网"})
+    client.post("/companies", data={"name": "华为", "industry": "互联网"})
+
+    # Try to update 华为 to have the same name as 阿里巴巴
+    response = client.put(
+        "/companies/2",
+        data={"name": "阿里巴巴", "industry": "互联网"},
+        headers={"HX-Request": "true"},
+    )
+    assert response.status_code == 409
+    assert "已存在" in response.text
+
+    # Verify 华为's name was not changed
+    Session = sessionmaker(bind=db_engine)
+    db = Session()
+    try:
+        company = db.query(Company).filter(Company.id == 2).first()
+        assert company.name == "华为", "Company name should not be changed when duplicate is detected"
+    finally:
+        db.close()
+
+    # Verify legitimate update still works (same name)
+    response = client.put(
+        "/companies/2",
+        data={"name": "华为", "industry": "电子"},
+    )
+    assert response.status_code == 200
+    assert "华为" in response.text
+
+
 def test_delete_company_without_applications(client):
     client.post("/companies", data={"name": "百度", "industry": "互联网"})
     response = client.delete("/companies/1")

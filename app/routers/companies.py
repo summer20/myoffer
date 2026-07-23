@@ -129,7 +129,14 @@ def update_company(
     company = db.get(Company, company_id)
     if not company:
         raise HTTPException(status_code=404, detail="Company not found")
-    company.name = name.strip()
+    stripped_name = name.strip()
+    existing = db.query(Company).filter(Company.name == stripped_name, Company.id != company_id).first()
+    if existing:
+        message = f"该公司已存在：{stripped_name}"
+        if request.headers.get("HX-Request"):
+            return HTMLResponse(content=f"<div class='error'>{message}</div>", status_code=409)
+        return HTMLResponse(content=message, status_code=409)
+    company.name = stripped_name
     company.industry = industry.strip()
     company.scale_tags = _clean_scale_tags(scale_tags)
     company.recruiting_open = recruiting_open
