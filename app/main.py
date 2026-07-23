@@ -5,14 +5,20 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse, JSONResponse
 
-from app.database import Base, engine
+from app.database import Base, engine, SessionLocal
 from app import models  # noqa: F401
 from app.routers import companies, applications, resume
+from app.seed_data import seed_if_empty
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
+    db = SessionLocal()
+    try:
+        seed_if_empty(db)
+    finally:
+        db.close()
     yield
 
 
