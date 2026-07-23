@@ -1,0 +1,20 @@
+<tr id="company-{{ company.id }}">
+    <td>{{ company.name }}</td>
+    <td>{{ company.industry }}</td>
+    <td>{{ company.scale_tags | join(', ') }}</td>
+    <td>
+        {% if company.recruiting_open %}✅{% else %}—{% endif %}
+        {% if company.recruiting_url %}<a href="{{ company.recruiting_url }}" target="_blank">链接</a>{% endif %}
+    </td>
+    <td>{% if company.applications %}已投递（{{ company.applications | length }}）{% else %}未投递{% endif %}</td>
+    <td>
+        {% if pending_confirm_id == company.id %}
+            该公司下还有 {{ company.applications | length }} 条投递记录，确认一并删除？
+            <button hx-delete="/companies/{{ company.id }}?confirm=true" hx-target="#company-rows" hx-swap="innerHTML">确认删除</button>
+        {% else %}
+            <button hx-get="/companies/{{ company.id }}/add-application-form" hx-target="#app-form-{{ company.id }}" hx-swap="innerHTML">+ 新增投递</button>
+            <button hx-delete="/companies/{{ company.id }}" hx-target="#company-rows" hx-swap="innerHTML">删除</button>
+        {% endif %}
+    </td>
+</tr>
+<tr class="app-form-row"><td colspan="6"><div id="app-form-{{ company.id }}"></div></td></tr>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>MyOffer</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/vendor/htmx.min.js"></script>
+    <script src="/static/vendor/alpine.min.js" defer></script>
+</head>
+<body>
+    <nav class="topnav">
+        <a href="/">公司库</a>
+        <a href="/applications">投递看板</a>
+        <a href="/resume">简历模块库</a>
+    </nav>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>公司库</h1>
+
+<form class="filters" hx-get="/" hx-target="body" hx-push-url="true">
+    <select name="industry">
+        <option value="">全部类型</option>
+        {% for opt in industry_options %}
+        <option value="{{ opt }}" {% if opt == selected_industry %}selected{% endif %}>{{ opt }}</option>
+        {% endfor %}
+    </select>
+    <label><input type="checkbox" name="recruiting_open" value="true"> 仅看已开启27秋招</label>
+    <select name="applied">
+        <option value="">全部</option>
+        <option value="yes">已投递</option>
+        <option value="no">未投递</option>
+    </select>
+    <button type="submit">筛选</button>
+</form>
+
+<table id="company-table">
+    <thead>
+        <tr><th>公司</th><th>类型</th><th>规模</th><th>27秋招</th><th>投递</th><th>操作</th></tr>
+    </thead>
+    <tbody id="company-rows">
+        {% include "companies/_rows.html" %}
+    </tbody>
+</table>
+
+<h2>新增公司</h2>
+<form hx-post="/companies" hx-target="#company-rows" hx-swap="innerHTML">
+    <input type="text" name="name" placeholder="公司名" required>
+    <input type="text" name="industry" placeholder="类型（如 互联网）" required list="industry-list">
+    <datalist id="industry-list">
+        {% for opt in industry_options %}<option value="{{ opt }}">{% endfor %}
+    </datalist>
+    {% for tag in scale_tag_options %}
+    <label><input type="checkbox" name="scale_tags" value="{{ tag }}"> {{ tag }}</label>
+    {% endfor %}
+    <label><input type="checkbox" name="recruiting_open" value="true"> 已开启27秋招</label>
+    <input type="url" name="recruiting_url" placeholder="秋招链接">
+    <button type="submit">新增</button>
+</form>
+{% endblock %}
