@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+*.pyc
+myoffer.db
+.superpowers/
+.pytest_cache/
