@@ -47,3 +47,13 @@ class Application(Base):
     notes = Column(Text, nullable=True)
 
     company = relationship("Company", back_populates="applications")
+
+
+class ResumeModule(Base):
+    __tablename__ = "resume_modules"
+
+    id = Column(Integer, primary_key=True)
+    category = Column(String, nullable=False)
+    title = Column(String, nullable=True)
+    content = Column(Text, nullable=False)
+    sort_order = Column(Integer, nullable=False, default=0)
