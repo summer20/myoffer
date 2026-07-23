@@ -1,4 +1,16 @@
-from sqlalchemy import Column, Integer, String, Boolean, Text, JSON, ForeignKey
+from datetime import datetime
+
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    Boolean,
+    Text,
+    JSON,
+    DateTime,
+    Date,
+    ForeignKey,
+)
 from sqlalchemy.orm import relationship
 
 from app.database import Base
@@ -20,10 +32,18 @@ class Company(Base):
     )
 
 
-# Stub Application class - placeholder for Task 4
-# The full implementation will replace this in Task 4
 class Application(Base):
     __tablename__ = "applications"
+
     id = Column(Integer, primary_key=True)
     company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
+    position = Column(String, nullable=False)
+    base_city = Column(String, nullable=False)
+    stage = Column(String, nullable=False, default="已投递")
+    applied_date = Column(Date, nullable=True)
+    updated_at = Column(
+        DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
+    notes = Column(Text, nullable=True)
+
     company = relationship("Company", back_populates="applications")
