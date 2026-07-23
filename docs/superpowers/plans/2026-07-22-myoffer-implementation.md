@@ -1480,7 +1480,7 @@ def move_module(
 <div class="module-card" id="module-{{ module.id }}">
     <h3>{{ module.title or module.category }}</h3>
     <pre class="module-content">{{ module.content }}</pre>
-    <button x-data @click="navigator.clipboard.writeText({{ module.content | tojson }})">复制</button>
+    <button x-data @click='navigator.clipboard.writeText({{ module.content | tojson }})'>复制</button>
     <button hx-get="/resume/modules/{{ module.id }}/edit" hx-target="#module-{{ module.id }}" hx-swap="outerHTML">编辑</button>
     <button hx-post="/resume/modules/{{ module.id }}/move" hx-vals='{"direction": "up"}' hx-target="#resume-panel" hx-swap="innerHTML">上移</button>
     <button hx-post="/resume/modules/{{ module.id }}/move" hx-vals='{"direction": "down"}' hx-target="#resume-panel" hx-swap="innerHTML">下移</button>
