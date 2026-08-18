@@ -61,15 +61,21 @@ fly deploy --app myoffer                          # 用 fly.toml + Dockerfile �
 
 ### 让 Mac 和 Windows 用同一份数据
 
-`MyOffer.exe` 默认会把数据库文件 `myoffer.db` 建在它自己所在的文件夹里。想让两台设备数据一致：
+`MyOffer.exe` 默认会把数据库文件 `myoffer.db` 建在它自己所在的文件夹里。想让两台设备数据一致，靠网盘同步这个文件：
 
-1. 把解压出来的 `MyOffer.exe` 放进一个你的网盘同步文件夹里（百度网盘/坚果云等的同步目录），双击运行
-2. 在 Mac 上，运行前设置环境变量指向同一个同步文件夹里的数据库文件，例如：
+1. **两台设备都装同一个网盘同步工具**（百度网盘、坚果云等），登录同一个账号。同步工具会在本地建一个同步文件夹，例如：
+   - 坚果云：Mac 上是 `~/Nutstore Files/`，Windows 上是 `C:\Users\你的用户名\Nutstore\`
+   - 百度网盘：具体路径以安装时显示的为准
+2. 在这个同步文件夹里新建一个子文件夹，比如 `MyOffer`
+3. **Windows 端**：把 `MyOffer.exe` 放进 `<同步文件夹>\MyOffer\` 里，双击运行——它会在同一个文件夹里自动生成 `myoffer.db`，之后这个文件会跟着网盘自动同步到 Mac
+4. **Mac 端**：不用挪动文件，运行时用环境变量指向同步文件夹里的那个数据库文件：
 
-       MYOFFER_DATABASE_URL="sqlite:////Users/你的用户名/百度网盘同步盘/MyOffer/myoffer.db" \
+       MYOFFER_DATABASE_URL="sqlite:////Users/你的用户名/Nutstore Files/MyOffer/myoffer.db" \
        .venv/bin/uvicorn app.main:app --reload
 
-**注意：不要两边同时开着跑**——先关掉一边（等网盘同步完，一般几秒到几十秒），再开另一边。同一个 SQLite 文件被两个进程同时写，可能会冲突甚至损坏。
+   把路径换成你实际的同步文件夹路径即可。
+
+**注意：不要两边同时开着跑**——用完一台就关掉，等网盘图标显示"已同步"（一般几秒到几十秒）再打开另一台。同一个 SQLite 文件被两个进程同时写，可能会冲突甚至损坏。
 
 ## 手动验收路径（每次发版前过一遍）
 
