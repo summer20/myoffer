@@ -49,6 +49,28 @@ fly deploy --app myoffer                          # 用 fly.toml + Dockerfile �
 
 `fly.toml` 里的 `app`/`primary_region` 如果跟你实际创建的不一样，改一下这两行即可。
 
+## Windows 版（打包成 .exe，不需要装 Python）
+
+每次往 `master` 推送代码，GitHub Actions 会自动在 Windows 上把项目打包成 `MyOffer.exe`：
+
+1. 打开 `https://github.com/summer20/myoffer/actions/workflows/build-windows-exe.yml`
+2. 点最上面那条最新的运行记录
+3. 页面往下拉到 "Artifacts"，下载 `MyOffer-windows`（是个 zip，解压出来就是 `MyOffer.exe`）
+4. 双击运行——第一次 Windows 可能弹出"Windows 已保护你的电脑"（因为没有付费买证书签名），点"更多信息" → "仍要运行"即可
+5. 运行后会自动打开浏览器到 `http://127.0.0.1:8000`，账号密码默认还是 `admin`/`myoffer`
+
+### 让 Mac 和 Windows 用同一份数据
+
+`MyOffer.exe` 默认会把数据库文件 `myoffer.db` 建在它自己所在的文件夹里。想让两台设备数据一致：
+
+1. 把解压出来的 `MyOffer.exe` 放进一个你的网盘同步文件夹里（百度网盘/坚果云等的同步目录），双击运行
+2. 在 Mac 上，运行前设置环境变量指向同一个同步文件夹里的数据库文件，例如：
+
+       MYOFFER_DATABASE_URL="sqlite:////Users/你的用户名/百度网盘同步盘/MyOffer/myoffer.db" \
+       .venv/bin/uvicorn app.main:app --reload
+
+**注意：不要两边同时开着跑**——先关掉一边（等网盘同步完，一般几秒到几十秒），再开另一边。同一个 SQLite 文件被两个进程同时写，可能会冲突甚至损坏。
+
 ## 手动验收路径（每次发版前过一遍）
 
 1. 首页能看到种子公司列表，按类型筛选可用
