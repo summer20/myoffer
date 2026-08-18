@@ -75,6 +75,7 @@ def list_applications(request: Request, stage: str | None = None, db: Session = 
             "applications": applications,
             "stage_options": DEFAULT_STAGES,
             "selected_stage": stage,
+            "active_nav": "applications",
         },
     )
 

@@ -1,19 +1,21 @@
-<tr id="company-{{ company.id }}">
-    <td colspan="6">
-        <form hx-put="/companies/{{ company.id }}" hx-target="#company-{{ company.id }}" hx-swap="outerHTML">
+<div class="row-card" id="company-{{ company.id }}">
+    <form class="stack" hx-put="/companies/{{ company.id }}" hx-target="#company-{{ company.id }}" hx-swap="outerHTML">
+        <div class="inline-form">
             <input type="text" name="name" value="{{ company.name }}" placeholder="公司名" required>
             <input type="text" name="industry" value="{{ company.industry }}" placeholder="类型（如 互联网）" required list="edit-industry-list-{{ company.id }}">
             <datalist id="edit-industry-list-{{ company.id }}">
                 {% for opt in industry_options %}<option value="{{ opt }}">{% endfor %}
             </datalist>
+            <input type="url" name="recruiting_url" value="{{ company.recruiting_url or '' }}" placeholder="秋招链接">
+        </div>
+        <div class="inline-form">
             {% for tag in scale_tag_options %}
             <label><input type="checkbox" name="scale_tags" value="{{ tag }}" {% if tag in company.scale_tags %}checked{% endif %}> {{ tag }}</label>
             {% endfor %}
             <input type="text" name="scale_tags" placeholder="自定义标签（可选）">
             <label><input type="checkbox" name="recruiting_open" value="true" {% if company.recruiting_open %}checked{% endif %}> 已开启27秋招</label>
-            <input type="url" name="recruiting_url" value="{{ company.recruiting_url or '' }}" placeholder="秋招链接">
-            <textarea name="notes" placeholder="备注">{{ company.notes or '' }}</textarea>
-            <button type="submit">保存</button>
-        </form>
-    </td>
-</tr>
+        </div>
+        <textarea name="notes" placeholder="备注（可选）">{{ company.notes or '' }}</textarea>
+        <div><button type="submit">保存</button></div>
+    </form>
+</div>

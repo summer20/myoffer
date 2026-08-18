@@ -1,10 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>简历模块库</h1>
+<div class="page-hero">
+    <span class="page-eyebrow">Resume modules</span>
+    <h1 class="page-title">拆开一次，<span class="accent">复制一生</span></h1>
+    <p class="page-subtitle">按分类整理简历模块，投递不同公司时一键复制粘贴。</p>
+</div>
+
 <div class="resume-layout">
-    <nav class="resume-categories">
+    <nav class="resume-categories" x-data="{ active: {{ selected_category | tojson }} }">
         {% for cat in categories %}
-        <button hx-get="/resume/categories/{{ cat }}" hx-target="#resume-panel" hx-swap="innerHTML">{{ cat }}</button>
+        <button :class="{ active: active === {{ cat | tojson }} }" @click="active = {{ cat | tojson }}" hx-get="/resume/categories/{{ cat }}" hx-target="#resume-panel" hx-swap="innerHTML">{{ cat }}</button>
         {% endfor %}
     </nav>
     <div id="resume-panel">

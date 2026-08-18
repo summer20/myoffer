@@ -1,4 +1,4 @@
-<form hx-post="/companies/{{ company.id }}/applications" hx-target="#company-rows" hx-swap="innerHTML">
+<form class="row-form inline-form" hx-post="/companies/{{ company.id }}/applications" hx-target="#company-rows" hx-swap="innerHTML">
     <input type="text" name="position" placeholder="岗位" required list="position-list-{{ company.id }}">
     <datalist id="position-list-{{ company.id }}">
         {% for opt in position_options %}<option value="{{ opt }}">{% endfor %}

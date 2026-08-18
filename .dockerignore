@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+myoffer.db
+.git/
+.pytest_cache/
+.superpowers/
+.DS_Store
+docs/
+tests/

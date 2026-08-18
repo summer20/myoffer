@@ -1,21 +1,25 @@
-<tr id="company-{{ company.id }}">
-    <td>{{ company.name }}</td>
-    <td>{{ company.industry }}</td>
-    <td>{{ company.scale_tags | join(', ') }}</td>
-    <td>
-        {% if company.recruiting_open %}✅{% else %}—{% endif %}
-        {% if company.recruiting_url %}<a href="{{ company.recruiting_url }}" target="_blank">链接</a>{% endif %}
-    </td>
-    <td>{% if company.applications %}已投递（{{ company.applications | length }}）{% else %}未投递{% endif %}</td>
-    <td>
+<div class="row-card reveal{% if pending_confirm_id == company.id %} confirm{% endif %}" id="company-{{ company.id }}">
+    <div class="row-main">
+        <span class="row-title">{{ company.name }}</span>
+        <div class="row-meta">
+            <span class="tag">{{ company.industry }}</span>
+            {% for tag in company.scale_tags %}<span class="tag accent">{{ tag }}</span>{% endfor %}
+            <span><span class="badge-dot{% if company.recruiting_open %} on{% endif %}"></span>{% if company.recruiting_open %}已开启27秋招{% else %}暂未开放{% endif %}</span>
+            {% if company.recruiting_url %}<a class="link-chip" href="{{ company.recruiting_url }}" target="_blank">秋招链接 ↗</a>{% endif %}
+            <span class="dim">{% if company.applications %}已投递（{{ company.applications | length }}）{% else %}未投递{% endif %}</span>
+        </div>
         {% if pending_confirm_id == company.id %}
-            该公司下还有 {{ company.applications | length }} 条投递记录，确认一并删除？
-            <button hx-delete="/companies/{{ company.id }}?confirm=true" hx-target="#company-rows" hx-swap="innerHTML">确认删除</button>
+            <div class="confirm-prompt">
+                <span>该公司下还有 {{ company.applications | length }} 条投递记录，确认一并删除？</span>
+                <button class="btn-danger" hx-delete="/companies/{{ company.id }}?confirm=true" hx-target="#company-rows" hx-swap="innerHTML">确认删除</button>
+            </div>
         {% else %}
-            <button hx-get="/companies/{{ company.id }}/add-application-form" hx-target="#app-form-{{ company.id }}" hx-swap="innerHTML">+ 新增投递</button>
-            <button hx-get="/companies/{{ company.id }}/edit" hx-target="#company-{{ company.id }}" hx-swap="outerHTML">编辑</button>
-            <button hx-delete="/companies/{{ company.id }}" hx-target="#company-rows" hx-swap="innerHTML">删除</button>
+            <div class="row-actions">
+                <button hx-get="/companies/{{ company.id }}/add-application-form" hx-target="#app-form-{{ company.id }}" hx-swap="innerHTML">+ 新增投递</button>
+                <button hx-get="/companies/{{ company.id }}/edit" hx-target="#company-{{ company.id }}" hx-swap="outerHTML">编辑</button>
+                <button class="btn-danger" hx-delete="/companies/{{ company.id }}" hx-target="#company-rows" hx-swap="innerHTML">删除</button>
+            </div>
         {% endif %}
-    </td>
-</tr>
-<tr class="app-form-row"><td colspan="6"><div id="app-form-{{ company.id }}"></div></td></tr>
+    </div>
+    <div id="app-form-{{ company.id }}"></div>
+</div>

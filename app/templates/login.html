@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>登录 · MyOffer</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <main style="max-width: 26rem; padding-top: var(--space-7);">
+        <div class="page-hero" style="text-align: center;">
+            <span class="page-eyebrow">MyOffer</span>
+            <h1 class="page-title" style="font-size: 2rem;">欢迎<span class="accent">回来</span></h1>
+        </div>
+        <div class="row-card">
+            {% if error %}
+            <div class="error">用户名或密码不对，再试一次</div>
+            {% endif %}
+            <form class="stack" method="post" action="/login">
+                <input type="text" name="username" placeholder="用户名" required autofocus>
+                <input type="password" name="password" placeholder="密码" required>
+                <div><button type="submit" style="width: 100%;">登录</button></div>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

@@ -59,6 +59,7 @@ def list_companies(
             "industry_options": _industry_options(db),
             "scale_tag_options": DEFAULT_SCALE_TAGS,
             "selected_industry": industry,
+            "active_nav": "companies",
         },
     )
 

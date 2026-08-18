@@ -1,0 +1,23 @@
+# App name and region — change `app` below if "myoffer" is already taken on
+# Fly.io (you'll pick the real name interactively via `fly launch` anyway).
+app = "myoffer"
+primary_region = "sin"
+
+[build]
+
+[env]
+  # Points the app at the persistent volume mounted below, so redeploys
+  # don't wipe your data. MYOFFER_USERNAME / MYOFFER_PASSWORD / MYOFFER_SECRET_KEY
+  # are secrets — set those with `fly secrets set`, never here.
+  MYOFFER_DATABASE_URL = "sqlite:////data/myoffer.db"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[mounts]]
+  source = "myoffer_data"
+  destination = "/data"

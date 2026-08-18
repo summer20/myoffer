@@ -4,10 +4,14 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse, JSONResponse
+from starlette.middleware.sessions import SessionMiddleware
 
+from app.auth import LoginRequiredMiddleware
+from app.config import SECRET_KEY
 from app.database import Base, engine, SessionLocal
 from app import models  # noqa: F401
-from app.routers import companies, applications, resume
+from app.paths import resource_path
+from app.routers import auth, companies, applications, resume
 from app.seed_data import seed_if_empty
 
 
@@ -23,7 +27,13 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="MyOffer", lifespan=lifespan)
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=resource_path("static")), name="static")
+# Order matters: SessionMiddleware must run first so `request.session` exists
+# by the time LoginRequiredMiddleware inspects it. Starlette runs middleware
+# in the reverse of the order added, so SessionMiddleware is added last.
+app.add_middleware(LoginRequiredMiddleware)
+app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
+app.include_router(auth.router)
 app.include_router(companies.router)
 app.include_router(applications.router)
 app.include_router(resume.router)

@@ -1,7 +1,7 @@
 <div class="module-card" id="module-{{ module.id }}">
-    <form hx-put="/resume/modules/{{ module.id }}" hx-target="#resume-panel" hx-swap="innerHTML">
+    <form class="stack" hx-put="/resume/modules/{{ module.id }}" hx-target="#resume-panel" hx-swap="innerHTML">
         <input type="text" name="title" value="{{ module.title or '' }}" placeholder="模块标题（可选）">
         <textarea name="content" required>{{ module.content }}</textarea>
-        <button type="submit">保存</button>
+        <div><button type="submit">保存</button></div>
     </form>
 </div>

@@ -1,18 +1,24 @@
-<tr id="application-{{ application.id }}">
-    <td>{{ application.company.name }}</td>
-    <td>{{ application.position }}</td>
-    <td>{{ application.base_city }}</td>
-    <td>
-        <form hx-patch="/applications/{{ application.id }}/stage" hx-target="#application-{{ application.id }}" hx-swap="outerHTML" hx-trigger="change">
-            <select name="stage">
-                {% for opt in stage_options %}
-                <option value="{{ opt }}" {% if opt == application.stage %}selected{% endif %}>{{ opt }}</option>
-                {% endfor %}
-            </select>
-        </form>
-    </td>
-    <td>{{ application.updated_at.strftime("%Y-%m-%d %H:%M") }}</td>
-    <td>{{ application.applied_date or "" }}</td>
-    <td>{{ application.notes or "" }}</td>
-    <td><button hx-delete="/applications/{{ application.id }}" hx-target="#application-{{ application.id }}" hx-swap="outerHTML" hx-confirm="确认删除该投递记录？">删除</button></td>
-</tr>
+<div class="row-card reveal" id="application-{{ application.id }}">
+    <div class="row-main">
+        <span class="row-title">{{ application.company.name }}</span>
+        <div class="row-meta">
+            <span class="tag">{{ application.position }}</span>
+            <span class="tag">{{ application.base_city }}</span>
+            <span class="dim">更新于 {{ application.updated_at.strftime("%Y-%m-%d %H:%M") }}</span>
+            {% if application.applied_date %}<span class="dim">投递于 {{ application.applied_date }}</span>{% endif %}
+            {% if application.notes %}<span class="dim">{{ application.notes }}</span>{% endif %}
+        </div>
+        <div class="stage-select">
+            <form hx-patch="/applications/{{ application.id }}/stage" hx-target="#application-{{ application.id }}" hx-swap="outerHTML" hx-trigger="change">
+                <select name="stage">
+                    {% for opt in stage_options %}
+                    <option value="{{ opt }}" {% if opt == application.stage %}selected{% endif %}>{{ opt }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+        <div class="row-actions">
+            <button class="btn-danger" hx-delete="/applications/{{ application.id }}" hx-target="#application-{{ application.id }}" hx-swap="outerHTML" hx-confirm="确认删除该投递记录？">删除</button>
+        </div>
+    </div>
+</div>

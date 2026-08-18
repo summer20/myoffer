@@ -46,6 +46,7 @@ def resume_home(request: Request, category: str | None = None, db: Session = Dep
             "categories": categories,
             "selected_category": selected,
             "modules": _modules_by_category(db, selected) if selected else [],
+            "active_nav": "resume",
         },
     )
 

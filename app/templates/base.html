@@ -2,6 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>MyOffer</title>
     <link rel="stylesheet" href="/static/style.css">
     <script src="/static/vendor/htmx.min.js"></script>
@@ -9,12 +10,14 @@
 </head>
 <body>
     <nav class="topnav">
-        <a href="/">公司库</a>
-        <a href="/applications">投递看板</a>
-        <a href="/resume">简历模块库</a>
+        <a href="/" class="wordmark">MyOffer</a>
+        <a href="/" class="nav-link{% if active_nav == 'companies' %} active{% endif %}">公司库</a>
+        <a href="/applications" class="nav-link{% if active_nav == 'applications' %} active{% endif %}">投递看板</a>
+        <a href="/resume" class="nav-link{% if active_nav == 'resume' %} active{% endif %}">简历模块库</a>
     </nav>
     <main>
         {% block content %}{% endblock %}
     </main>
+    <script src="/static/app.js"></script>
 </body>
 </html>

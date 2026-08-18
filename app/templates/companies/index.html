@@ -1,46 +1,59 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>公司库</h1>
+<div class="page-hero">
+    <span class="page-eyebrow">Company library</span>
+    <h1 class="page-title">追踪每一家<span class="accent">值得投递</span>的公司</h1>
+    <p class="page-subtitle">类型、规模、27秋招开放情况一目了然，点一下就能记录投递。</p>
+    <div class="stat-line">
+        <span class="stat"><strong data-count-to="{{ companies | length }}">0</strong> 家公司</span>
+        <span class="stat"><strong data-count-to="{{ companies | map(attribute='applications') | map('length') | sum }}">0</strong> 条投递中</span>
+    </div>
+</div>
 
-<form class="filters" hx-get="/" hx-target="body" hx-push-url="true">
-    <select name="industry">
-        <option value="">全部类型</option>
-        {% for opt in industry_options %}
-        <option value="{{ opt }}" {% if opt == selected_industry %}selected{% endif %}>{{ opt }}</option>
-        {% endfor %}
-    </select>
-    <label><input type="checkbox" name="recruiting_open" value="true"> 仅看已开启27秋招</label>
-    <select name="applied">
-        <option value="">全部</option>
-        <option value="yes">已投递</option>
-        <option value="no">未投递</option>
-    </select>
-    <button type="submit">筛选</button>
-</form>
+<section class="block">
+    <form class="filters" hx-get="/" hx-target="body" hx-push-url="true">
+        <select name="industry">
+            <option value="">全部类型</option>
+            {% for opt in industry_options %}
+            <option value="{{ opt }}" {% if opt == selected_industry %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+        </select>
+        <select name="applied">
+            <option value="">全部</option>
+            <option value="yes">已投递</option>
+            <option value="no">未投递</option>
+        </select>
+        <label><input type="checkbox" name="recruiting_open" value="true"> 仅看已开启27秋招</label>
+        <button type="submit">筛选</button>
+    </form>
 
-<table id="company-table">
-    <thead>
-        <tr><th>公司</th><th>类型</th><th>规模</th><th>27秋招</th><th>投递</th><th>操作</th></tr>
-    </thead>
-    <tbody id="company-rows">
+    <div class="card-list" id="company-rows">
         {% include "companies/_rows.html" %}
-    </tbody>
-</table>
+    </div>
+</section>
 
-<h2>新增公司</h2>
-<form hx-post="/companies" hx-target="#company-rows" hx-swap="innerHTML">
-    <input type="text" name="name" placeholder="公司名" required>
-    <input type="text" name="industry" placeholder="类型（如 互联网）" required list="industry-list">
-    <datalist id="industry-list">
-        {% for opt in industry_options %}<option value="{{ opt }}">{% endfor %}
-    </datalist>
-    {% for tag in scale_tag_options %}
-    <label><input type="checkbox" name="scale_tags" value="{{ tag }}"> {{ tag }}</label>
-    {% endfor %}
-    <input type="text" name="scale_tags" placeholder="自定义标签（可选）">
-    <label><input type="checkbox" name="recruiting_open" value="true"> 已开启27秋招</label>
-    <input type="url" name="recruiting_url" placeholder="秋招链接">
-    <textarea name="notes" placeholder="备注"></textarea>
-    <button type="submit">新增</button>
-</form>
+<section class="block">
+    <h2 class="section-title">新增公司</h2>
+    <div class="row-card">
+        <form class="stack" hx-post="/companies" hx-target="#company-rows" hx-swap="innerHTML">
+            <div class="inline-form">
+                <input type="text" name="name" placeholder="公司名" required>
+                <input type="text" name="industry" placeholder="类型（如 互联网）" required list="industry-list">
+                <datalist id="industry-list">
+                    {% for opt in industry_options %}<option value="{{ opt }}">{% endfor %}
+                </datalist>
+                <input type="url" name="recruiting_url" placeholder="秋招链接">
+            </div>
+            <div class="inline-form">
+                {% for tag in scale_tag_options %}
+                <label><input type="checkbox" name="scale_tags" value="{{ tag }}"> {{ tag }}</label>
+                {% endfor %}
+                <input type="text" name="scale_tags" placeholder="自定义标签（可选）">
+                <label><input type="checkbox" name="recruiting_open" value="true"> 已开启27秋招</label>
+            </div>
+            <textarea name="notes" placeholder="备注（可选）"></textarea>
+            <div><button type="submit">新增公司</button></div>
+        </form>
+    </div>
+</section>
 {% endblock %}
