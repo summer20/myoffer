@@ -1,0 +1,40 @@
+name: Build Windows exe
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - "app/**"
+      - "static/**"
+      - "requirements.txt"
+      - "run_desktop.py"
+      - ".github/workflows/build-windows-exe.yml"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pyinstaller
+
+      - name: Run tests
+        run: pytest -v
+
+      - name: Build exe
+        run: >
+          pyinstaller --onefile --name MyOffer
+          --add-data "app/templates;app/templates"
+          --add-data "static;static"
+          run_desktop.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MyOffer-windows
+          path: dist/MyOffer.exe

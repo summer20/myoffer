@@ -4,3 +4,7 @@ __pycache__/
 myoffer.db
 .superpowers/
 .pytest_cache/
+.DS_Store
+dist/
+build/
+*.spec
